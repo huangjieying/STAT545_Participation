@@ -177,7 +177,7 @@ gvsl+geom_point(aes(size=pop), alpha=0.2) +scale_size_area()
 <!-- end list -->
 
 ``` r
-gvsl+geom_point(aes(size=pop, fill=continent), shape=21, color="black")
+gvsl+geom_point(aes(size=pop, fill=continent), shape=21, color="black", alpha=0.5)
 ```
 
 ![](cm007-exercise_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
@@ -210,6 +210,20 @@ over time, using a path plot.
   - Add `arrow=arrow()` option.
   - Add `geom_text`, with year label.
 
+<!-- end list -->
+
+``` r
+gapminder %>% 
+  filter(country=="Rwanda") %>% 
+  arrange(year) %>% 
+  ggplot(aes(gdpPercap, lifeExp)) +
+  #scale_x_log10()+
+  geom_point()+
+  geom_path(arrow = arrow())
+```
+
+![](cm007-exercise_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
 ## Two categorical variables
 
 Try `cyl` (number of cylinders) ~ `am` (transmission) in the `mtcars`
@@ -219,14 +233,46 @@ data frame.
   - `geom_count()`.
   - `geom_bin2d()`. Compare with `geom_tile()` with `fill` aes.
 
+<!-- end list -->
+
+``` r
+ggplot(mtcars, aes(factor(cyl), factor(am))) +
+  geom_bin2d()
+```
+
+![](cm007-exercise_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
 ## Overplotting
 
 Try a scatterplot with:
 
-  - Alpha transparency.
+  - Alpha
+    transparency.
   - `geom_hex()`
   - `geom_density2d()`
   - `geom_smooth()`
+
+<!-- end list -->
+
+``` r
+gvsl+geom_hex() ## require package
+```
+
+![](cm007-exercise_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+``` r
+gvsl+geom_density2d()
+```
+
+![](cm007-exercise_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->
+
+``` r
+gvsl+geom_point(alpha=0.1) +geom_smooth()
+```
+
+    ## `geom_smooth()` using method = 'gam' and formula 'y ~ s(x, bs = "cs")'
+
+![](cm007-exercise_files/figure-gfm/unnamed-chunk-14-3.png)<!-- -->
 
 ## Bar plots
 
@@ -235,6 +281,17 @@ How many countries are in each continent? Use the year 2007.
 1.  After filtering the gapminder data to 2007, make a bar chart of the
     number of countries in each continent. Store everything except the
     geom in the variable `d`.
+
+<!-- end list -->
+
+``` r
+gapminder %>% 
+  filter(year==2007) %>% 
+  ggplot(aes(continent))+
+  geom_bar()
+```
+
+![](cm007-exercise_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 2.  Notice the y-axis. Oddly, `ggplot2` doesn’t make it obvious how to
     change to proportion. Try adding a `y` aesthetic:
@@ -247,6 +304,14 @@ or see the probability mass function of a categorical random variable.
 
   - Add `coord_polar()` to a scatterplot.
 
+<!-- end list -->
+
+``` r
+gvsl+geom_point()+coord_polar()
+```
+
+![](cm007-exercise_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+
 # Want more practice?
 
 If you’d like some practice, give these exercises a try
@@ -256,20 +321,84 @@ coloured by continent. Then, to that same plot, fit a straight
 regression line to each continent, without the error bars. If you can,
 try piping the data frame into the `ggplot` function.
 
+``` r
+ggplot(gapminder, aes(year, lifeExp, color=continent)) + 
+  geom_point()
+```
+
+![](cm007-exercise_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+``` r
+ggplot(gapminder, aes(year, lifeExp, color=continent)) + 
+  geom_point() + geom_smooth(aes(group=continent))
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](cm007-exercise_files/figure-gfm/unnamed-chunk-17-2.png)<!-- -->
+
 **Exercise 2**: Repeat Exercise 1, but switch the *regression line* and
 *geom\_point* layers. How is this plot different from that of Exercise
 1?
+
+``` r
+ggplot(gapminder, aes(year, lifeExp, color=continent)) + 
+   geom_smooth(aes(group=continent))+geom_point()
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](cm007-exercise_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 **Exercise 3**: Omit the `geom_point` layer from either of the above two
 plots (it doesn’t matter which). Does the line still show up, even
 though the data aren’t shown? Why or why not?
 
+``` r
+ggplot(gapminder, aes(year, lifeExp, color=continent)) + 
+   geom_smooth(aes(group=continent))
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](cm007-exercise_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+
 **Exercise 4**: Make a plot of `year` (x) vs `lifeExp` (y), facetted by
 continent. Then, fit a smoother through the data for each continent,
 without the error bars. Choose a span that you feel is appropriate.
+
+``` r
+ggplot(gapminder, aes(year, lifeExp)) + 
+  facet_wrap(~continent) +
+  geom_point()+
+  geom_smooth()
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](cm007-exercise_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 **Exercise 5**: Plot the population over time (year) using lines, so
 that each country has its own line. Colour by `gdpPercap`. Add alpha
 transparency to your liking.
 
+``` r
+ggplot(gapminder, aes(year, pop, color=continent )) +
+  geom_smooth(alpha=0.5)
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](cm007-exercise_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+
 **Exercise 6**: Add points to the plot in Exercise 5.
+
+``` r
+ggplot(gapminder, aes(year, pop, color=continent )) +
+    geom_point()+
+  geom_smooth(alpha=0.5)
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](cm007-exercise_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
