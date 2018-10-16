@@ -213,5 +213,11 @@ plot_ly(gapminder,
         opacity = 0.2)
 ```
 
-
+What makes a plot “publication quality”? Give examples
+- Labels, units
+- Consistency
+- Resolution / aspect ratio
+- No color
+- Font size
+- Sans serif
 
